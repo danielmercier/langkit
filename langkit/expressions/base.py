@@ -1540,6 +1540,15 @@ class LiteralExpr(ResolvedExpression):
         """
         raise not_implemented_error(self, self.rendrer_python_constant)
 
+    def render_ocaml_constant(self):
+        """
+        assuming this expression is a valid constant, return ocaml code to
+        materialize it in the generated binding.
+
+        :rtype: str
+        """
+        raise not_implemented_error(self, self.render_ocaml_constant)
+
     @property
     def subexprs(self):
         return {'0-type': self.static_type,
@@ -1585,6 +1594,15 @@ class BindableLiteralExpr(LiteralExpr):
         """
         raise not_implemented_error(self, self.rendrer_python_constant)
 
+    def render_ocaml_constant(self):
+        """
+        assuming this expression is a valid constant, return ocaml code to
+        materialize it in the generated binding.
+
+        :rtype: str
+        """
+        raise not_implemented_error(self, self.render_ocaml_constant)
+
 
 class BooleanLiteralExpr(BindableLiteralExpr):
 
@@ -1602,6 +1620,9 @@ class BooleanLiteralExpr(BindableLiteralExpr):
     def render_python_constant(self):
         return str(self.value)
 
+    def render_ocaml_constant(self):
+        return "true" if self.value else "false"
+
 
 class IntegerLiteralExpr(BindableLiteralExpr):
 
@@ -1618,6 +1639,9 @@ class IntegerLiteralExpr(BindableLiteralExpr):
         return str(self.value)
 
     def render_python_constant(self):
+        return str(self.value)
+
+    def render_ocaml_constant(self):
         return str(self.value)
 
 
@@ -1641,6 +1665,9 @@ class CharacterLiteralExpr(BindableLiteralExpr):
 
     def render_python_constant(self):
         return repr(self.value)
+
+    def render_ocaml_constant(self):
+        return '(Char.code {})'.format(ord(self.value))
 
 
 class NullExpr(BindableLiteralExpr):
@@ -1673,6 +1700,9 @@ class NullExpr(BindableLiteralExpr):
 
     def render_python_constant(self):
         return 'None' if self.type.is_entity_type else self.type.py_nullexpr
+
+    def render_ocaml_constant(self):
+        return 'None'
 
 
 class UncheckedCastExpr(ResolvedExpression):
